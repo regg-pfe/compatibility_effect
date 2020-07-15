@@ -32,7 +32,7 @@ const intro = magpieViews.view_generator("intro", {
         Please proceed to the experimental instructions when you feel ready - please only continue with the experiment if you are operating on a computer system with a keyboard (the experiment doesn't work with a touchscreen).
           <br />
           <br />
-        (unfortunately we have to exclude all left-handed from praticipation so please only proceed if you confirm to be right-handed for the purpose of correctness of our study).
+        (unfortunately we have to exclude all left-handed from participation so please only proceed if you confirm to be right-handed for the purpose of correctness of our study).
           <br />
         Good Luck!`,
   buttonText: 'Begin the experiment'
@@ -54,7 +54,7 @@ const instructions_general = magpieViews.view_generator("instructions", {
           <br />
         The experiment consists of 4 blocks: one short practice phase to get aquainted with stimulus sizes and stimulus-key mappings,
           <br />
-        followed by an experimental phase for the first mapping and respectively one short paractice phase,
+        followed by an experimental phase for the first mapping and respectively one short practice phase,
           <br />
         followed by an experimental phase for the second mapping.
           <br />
