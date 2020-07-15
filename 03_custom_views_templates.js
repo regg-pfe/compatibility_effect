@@ -82,6 +82,7 @@ custom_views.keypress_custom = function(config) {
 
                     const trial_data = {
                         trial_type: config.trial_type,
+                        trial_block: config.trial_block,
                         trial_number: CT + 1,
                         key_pressed: keyPressed,
                         correctness: correctness,
