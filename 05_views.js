@@ -26,7 +26,7 @@ const intro = magpieViews.view_generator("intro", {
   text: `Welcome to our experiment!
           <br />
           <br />
-        Our goal is to investigate compatibilty effects in cognitive representations by means of a simple key-press experiment.
+        Our goal is to investigate compatibility effects in cognitive representations by means of a simple key-press experiment.
           <br />
           <br />
         Please proceed to the experimental instructions when you feel ready - please only continue with the experiment if you are operating on a computer system with a keyboard (the experiment doesn't work with a touchscreen).
