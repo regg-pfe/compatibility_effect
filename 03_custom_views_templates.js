@@ -47,7 +47,7 @@ custom_views.keypress_custom = function(config) {
 
                 if (keyPressed === key1 || keyPressed === key2) {
                     let correctness;
-                    const RT = Date.now() - startingTime; // measure RT before anything else
+                    const RT = Date.now() - startingTime - 2500; // measure RT before anything else
 
 
                     // clear old timeouts and remove them from the timeout array
@@ -57,7 +57,7 @@ custom_views.keypress_custom = function(config) {
                     window.timeout.shift();
 
 
-                    if( RT > 4500) {
+                    if( RT > 2000) {
                       correctness = "timeout";
                       $(".magpie-view-stimulus").addClass("magpie-invisible");
                       $('#feedback').text('');
