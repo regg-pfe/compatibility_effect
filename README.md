@@ -1,5 +1,7 @@
 # Welcome to our compatibility experiment!
 
-Our goal is to investigate compatibility effects in cognitive representations by means of a simple key-press experiment.
+Our goal is to investigate compatibility effects in cognitive representations by means of a simple online key-press experiment.
+
+You can find the experiment here: https://compatibility-effect-xplab-group11.netlify.app/
          
 
