@@ -1,4 +1,4 @@
-# Welcome to our compatibility experiment!
+# size-space compatibility
 
 Our goal is to investigate size-space compatibility effects in cognitive representations by means of a simple online key-press experiment.
 
