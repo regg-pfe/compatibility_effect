@@ -1,0 +1,57 @@
+---
+title: "data_analysis_test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library("tidyverse")
+library("brms")
+library("ggpubr")
+```
+
+```{r message=FALSE, warning=FALSE}
+test_data <- read.csv("C:\\Users\\Janni\\Desktop\\uni kram\\Psychology Lab\\experiment replication\\results_157_compatibility_effect-xpLab2020_project+group+11+(Japtok,Kettler,Pfennigschmidt,Zollner).csv", sep = ",", header = TRUE) %>%  as.tibble()
+test_data
+test_data_clean <- test_data %>% select(submission_id,
+                                        submission_id,
+                                        RT,
+                                        correctness,
+                                        trial_type,
+                                        key_pressed)
+#currently there is an issue in our implementation which adds the time between every trial to the reactiontime, hence we subtract the time 2500 ms
+test_data_clean$RT <- test_data_clean$RT - 2500
+test_data_clean <- test_data_clean %>% filter(RT >= 100 & RT <= 1500)
+test_data_clean <- test_data_clean %>% mutate(
+  trial_type = factor(trial_type , levels = c("compatible", "incompatible"))
+)
+#test_data_clean
+test_data_clean$correctness [test_data_clean$correctness == "correct"] <- 1
+test_data_clean$correctness [test_data_clean$correctness == "incorrect"] <- 0
+test_data_clean$key_pressed [test_data_clean$key_pressed == "q"] <- "left"
+test_data_clean$key_pressed [test_data_clean$key_pressed == "p"] <- "right"
+by_participant <- test_data_clean %>% group_by(submission_id, trial_type, key_pressed)
+by_participant <- by_participant %>% mutate(Individual_mean_RT = mean(RT)
+                          ,correctness = as.numeric(correctness)
+                          ,Individual_mean_correctness = mean(correctness)
+                          ,key_pressed = factor(key_pressed , levels = c("left", "right"))
+                          )
+final_data <- ungroup(by_participant) 
+final_data
+ggboxplot(final_data, x = "trial_type", y = "Individual_mean_RT", color = "key_pressed")
+ggboxplot(final_data, x = "trial_type", y = "Individual_mean_correctness", color = "key_pressed")
+ggboxplot(final_data, x = "trial_type", y = "Individual_mean_RT")
+```
+
+```{r message=FALSE, warning=FALSE}
+#aov(Individual_mean_RT ~ trial_type + key_pressed, data = final_data) %>% anova()
+#aov(Individual_mean_correctness ~ trial_type + key_pressed, data = final_data) %>% anova()
+aov(Individual_mean_RT ~ trial_type * key_pressed, data = final_data) %>% anova()
+aov(Individual_mean_correctness ~ trial_type * key_pressed, data = final_data) %>% anova()
+
+
+```
+
