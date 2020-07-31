@@ -1,0 +1,86 @@
+---
+title: "XPlab_2020_final"
+author: "Japtok, Kettler, Pfennigschmidt, Zollner"
+date: "26 7 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library("tidyverse")
+library("brms")
+library("ggpubr")
+```
+
+```{r message=FALSE, warning=FALSE}
+test_data <- read.csv("C:\\Users\\Janni\\Desktop\\uni kram\\Psychology Lab\\experiment replication\\results_157_compatibility_effect-xpLab2020_final.csv", sep = ",", header = TRUE) %>%  as.tibble()
+test_data
+test_data_clean <- test_data %>% select(submission_id,
+                                        RT,
+                                        correctness,
+                                        trial_type,
+                                        key_pressed)
+#filter reaction times &factorize trial_type
+test_data_clean <- test_data_clean %>% filter(RT >= 100 & RT <= 1500)
+test_data_clean <- test_data_clean %>% mutate(
+  trial_type = factor(trial_type , levels = c("compatible", "incompatible"))
+)
+
+test_data_clean
+
+#make correctness numerical and nicer representation for response location
+test_data_clean$correctness [test_data_clean$correctness == "correct"] <- 1
+test_data_clean$correctness [test_data_clean$correctness == "incorrect"] <- 0
+test_data_clean$key_pressed [test_data_clean$key_pressed == "q"] <- "left"
+test_data_clean$key_pressed [test_data_clean$key_pressed == "p"] <- "right"
+
+#compute mean reaction_time and mean correctness for each combination of: participant, compatibility, and response location
+by_participant <- test_data_clean %>% group_by(submission_id, trial_type, key_pressed)
+by_participant <- by_participant %>% mutate(Individual_mean_RT = mean(RT)
+                          ,correctness = as.numeric(correctness)
+                          ,Individual_mean_correctness = mean(correctness)
+                          ,key_pressed = factor(key_pressed , levels = c("left", "right"))
+                          )
+final_data <- ungroup(by_participant)# %>% group_by(submission_id) %>% mutate(Individual_mean_correctness = mean(correctness))
+final_data
+#actually the data we use// filter trials with low correctness !! Anmerkung wenn man nur pro participant schaut hat keiner weniger als 90% correct...
+mean_correctness_low <- final_data %>% filter(Individual_mean_correctness >= 0.9)
+mean_correctness_low
+ggboxplot(mean_correctness_low, x = "trial_type", y = "Individual_mean_RT", color = "key_pressed")
+ggboxplot(mean_correctness_low, x = "trial_type", y = "Individual_mean_correctness", color = "key_pressed")
+ggboxplot(mean_correctness_low, x = "trial_type", y = "Individual_mean_RT")
+ggboxplot(mean_correctness_low, x = "trial_type", y = "Individual_mean_correctness")
+```
+
+```{r message=FALSE, warning=FALSE}
+# compute significance values for predicted variables: Individual_mean_RT , Individual_mean_correctness 
+# predictor variables : trial_type, key_pressed
+aov(Individual_mean_RT ~ trial_type * key_pressed, data = mean_correctness_low) %>% anova()
+aov(Individual_mean_correctness ~ trial_type * key_pressed, data = mean_correctness_low) %>% anova()
+
+#test_data_clean <- test_data_clean %>% mutate(correctness = as.numeric(correctness), key_pressed = factor(key_pressed , levels = c("left", "right")))
+#aov(RT ~ trial_type * key_pressed, data = test_data_clean) %>% anova()
+#aov(correctness ~ trial_type * key_pressed, data = test_data_clean) %>% anova()
+#ggboxplot(test_data_clean, x = "trial_type", y = "RT", color = "key_pressed")
+#ggboxplot(test_data_clean, x = "trial_type", y = "correctness", color = "key_pressed")
+#ggboxplot(test_data_clean, x = "trial_type", y = "RT")
+#ggboxplot(test_data_clean, x = "trial_type", y = "correctness")
+
+```
+```{r}
+ttest_data_compatible_left <- mean_correctness_low %>% filter(trial_type == "compatible", key_pressed == "left")
+ttest_data_incompatible_left <- mean_correctness_low %>% filter(trial_type == "incompatible", key_pressed == "left")
+
+ttest_data_compatible_right <- mean_correctness_low %>% filter(trial_type == "compatible", key_pressed == "right")
+ttest_data_incompatible_right <- mean_correctness_low %>% filter(trial_type == "incompatible", key_pressed == "right")
+
+# ttest comparing mean reaction_time of left-hand responses for compatible and incompatible mapping
+t.test(ttest_data_compatible_left$Individual_mean_RT , ttest_data_incompatible_left$Individual_mean_RT , alternative = "greater")
+# ttest comparing mean reaction_time of right-hand responses for compatible and incompatible mapping
+t.test(ttest_data_compatible_right$RT , ttest_data_incompatible_right$RT , alternative = "less")
+```
+
+
